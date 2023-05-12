@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "api_pb/";
+package proto_converter;
+
+service ConvertService{
+  rpc Convert(Money) returns (Money){}
+}
+
+message Money{
+  string amount = 1;
+  string currencyCode = 2;
+}
