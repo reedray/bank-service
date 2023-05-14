@@ -4,14 +4,13 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/reedray/bank-service/app_services/converter/internal/entity"
+	"github.com/reedray/bank-service/internal/converter/entity"
 	"net/http"
 	"strconv"
 )
 
 const (
-	CurAbbreviation = "BYN"
-	url             = "https://api.nbrb.by/exrates/rates/"
+	url = "https://api.nbrb.by/exrates/rates/"
 )
 
 type responseWebAPI struct {
@@ -39,10 +38,10 @@ func New() *ConvertWebAPI {
 }
 
 func (cw *ConvertWebAPI) Convert(currencyId int) (entity.ExchangeRate, error) {
-
 	resp, err := cw.client.Get(url + strconv.Itoa(currencyId))
 	if err != nil || resp.StatusCode != http.StatusOK {
-		return entity.ExchangeRate{}, fmt.Errorf("can`t read responseWebAPI body %w", err)
+		fmt.Printf("web api failed to fetch data")
+		return entity.ExchangeRate{}, fmt.Errorf("web api failed to fetch data %w", err)
 	}
 	defer resp.Body.Close()
 

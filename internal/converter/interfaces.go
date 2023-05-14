@@ -1,16 +1,13 @@
-package usecase
+package converter
 
 import (
 	"context"
-	"github.com/reedray/bank-service/app_services/converter/internal/entity"
+	"github.com/reedray/bank-service/api/pb/converter"
+	"github.com/reedray/bank-service/internal/converter/entity"
 )
 
-type ExchangeDTO struct {
-	CurrencyCode string
-}
-
 type ConvertUseCase interface {
-	Convert(ctx context.Context, data ExchangeDTO) (float64, error)
+	Convert(ctx context.Context, data *converter.Money) (*converter.Money, error)
 }
 
 type ConvertRepository interface {

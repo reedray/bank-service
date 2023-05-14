@@ -1,9 +1,9 @@
-package repository
+package storage
 
 import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
-	"github.com/reedray/bank-service/app_services/converter/config"
+	"github.com/reedray/bank-service/config/converter"
 	"strconv"
 	"time"
 )
@@ -14,7 +14,7 @@ type RedisRepository struct {
 	expiresAt time.Duration
 }
 
-func NewRedis(cfg *config.Config) (*RedisRepository, error) {
+func NewRedis(cfg *converter.Config) (*RedisRepository, error) {
 	client := redis.NewClient(&redis.Options{Addr: cfg.Redis.Addr})
 	_, err := client.Ping(context.Background()).Result()
 	if err != nil {
@@ -45,6 +45,7 @@ func (r *RedisRepository) GetExchangeRates(ctx context.Context, currenciesCodeKe
 // SetExchangeRates takes a pair of currency codes as a string
 // for example EUR:USD and sets a ratio for them
 func (r *RedisRepository) SetExchangeRates(ctx context.Context, currencyCode string, ratio float64) error {
+	fmt.Println("IN REPO SET")
 	err := r.client.Set(ctx, currencyCode, ratio, r.expiresAt).Err()
 	if err != nil {
 		return fmt.Errorf("can`t set a value to a database %w", err)

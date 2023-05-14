@@ -4,7 +4,7 @@
 // 	protoc        v3.12.4
 // source: converter.proto
 
-package api_pb
+package converter
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
