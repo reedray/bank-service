@@ -4,7 +4,7 @@
 // - protoc             v3.12.4
 // source: converter.proto
 
-package converter
+package gen_converter
 
 import (
 	context "context"
@@ -35,7 +35,7 @@ func NewConvertServiceClient(cc grpc.ClientConnInterface) ConvertServiceClient {
 
 func (c *convertServiceClient) Convert(ctx context.Context, in *Money, opts ...grpc.CallOption) (*Money, error) {
 	out := new(Money)
-	err := c.cc.Invoke(ctx, "/proto_converter.ConvertService/Convert", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/converter.protobuf.ConvertService/Convert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _ConvertService_Convert_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto_converter.ConvertService/Convert",
+		FullMethod: "/converter.protobuf.ConvertService/Convert",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConvertServiceServer).Convert(ctx, req.(*Money))
@@ -92,7 +92,7 @@ func _ConvertService_Convert_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ConvertService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto_converter.ConvertService",
+	ServiceName: "converter.protobuf.ConvertService",
 	HandlerType: (*ConvertServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

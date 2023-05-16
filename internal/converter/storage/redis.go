@@ -45,7 +45,6 @@ func (r *RedisRepository) GetExchangeRates(ctx context.Context, currenciesCodeKe
 // SetExchangeRates takes a pair of currency codes as a string
 // for example EUR:USD and sets a ratio for them
 func (r *RedisRepository) SetExchangeRates(ctx context.Context, currencyCode string, ratio float64) error {
-	fmt.Println("IN REPO SET")
 	err := r.client.Set(ctx, currencyCode, ratio, r.expiresAt).Err()
 	if err != nil {
 		return fmt.Errorf("can`t set a value to a database %w", err)

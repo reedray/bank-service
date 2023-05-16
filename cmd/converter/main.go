@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	converter2 "github.com/reedray/bank-service/api/pb/converter"
+	"github.com/reedray/bank-service/api/pb/converter/gen_converter"
 	"github.com/reedray/bank-service/config/converter"
 	"github.com/reedray/bank-service/internal/converter/storage"
-	grpc2 "github.com/reedray/bank-service/internal/converter/transport/grpc"
+	"github.com/reedray/bank-service/internal/converter/transport/grpc_transport"
 	"github.com/reedray/bank-service/internal/converter/usecase"
 	"github.com/reedray/bank-service/internal/converter/usecase/webapi"
 	"github.com/reedray/bank-service/pkg/logger"
@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	configPath = "./config/config.yml"
+	configPath = "./config/converter/config.yml"
 )
 
 func main() {
@@ -46,7 +46,7 @@ func main() {
 	convertUseCase := usecase.New(redisRepository, webAPI)
 	log.Info("convert UseCase created")
 
-	handler := grpc2.New(convertUseCase)
+	handler := grpc_transport.NewServer(convertUseCase)
 
 	listener, err := net.Listen("tcp", cfg.Grpc.Addr)
 	if err != nil {
@@ -54,7 +54,7 @@ func main() {
 		return
 	}
 	server := grpc.NewServer()
-	converter2.RegisterConvertServiceServer(server, handler)
+	gen_converter.RegisterConvertServiceServer(server, handler)
 	log.Info("starting server")
 	if err = server.Serve(listener); err != nil {
 		log.Fatal(err.Error())

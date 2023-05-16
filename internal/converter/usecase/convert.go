@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"github.com/reedray/bank-service/api/pb/converter"
-	converter2 "github.com/reedray/bank-service/internal/converter"
+	"github.com/reedray/bank-service/api/pb/converter/gen_converter"
+	"github.com/reedray/bank-service/internal/converter"
 	"strconv"
 )
 
@@ -12,12 +12,12 @@ import (
 var hm = map[string]int{"USD": 431, "EUR": 451}
 
 type ConvertUseCaseImpl struct {
-	repo     converter2.ConvertRepository
-	webApi   converter2.ConvertWebAPI
+	repo     converter.ConvertRepository
+	webApi   converter.ConvertWebAPI
 	Codes_ID map[string]int
 }
 
-func New(cr converter2.ConvertRepository, wa converter2.ConvertWebAPI) *ConvertUseCaseImpl {
+func New(cr converter.ConvertRepository, wa converter.ConvertWebAPI) *ConvertUseCaseImpl {
 	return &ConvertUseCaseImpl{
 		repo:     cr,
 		webApi:   wa,
@@ -25,7 +25,7 @@ func New(cr converter2.ConvertRepository, wa converter2.ConvertWebAPI) *ConvertU
 	}
 }
 
-func (c *ConvertUseCaseImpl) Convert(ctx context.Context, data *converter.Money) (*converter.Money, error) {
+func (c *ConvertUseCaseImpl) Convert(ctx context.Context, data *gen_converter.Money) (*gen_converter.Money, error) {
 
 	repoRate, err := c.repo.GetExchangeRates(ctx, data.CurrencyCode)
 	if err != nil {
@@ -41,11 +41,11 @@ func (c *ConvertUseCaseImpl) Convert(ctx context.Context, data *converter.Money)
 		repoRate = webApiResponse.Rate
 	}
 	//possibly should be as a method of entity layer
-	m := converter.Money{
+	m := gen_converter.Money{
 		Amount:       "",
 		CurrencyCode: "BYN",
 	}
-	amount, _ := strconv.ParseFloat(m.Amount, 64)
+	amount, _ := strconv.ParseFloat(data.Amount, 64)
 	amount *= repoRate
 	m.Amount = fmt.Sprintf("%f", amount)
 	return &m, nil

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+
+option go_package = "./gen_transact";
+package transfer.protobuf;
+
+
+service TransferService{
+  rpc Transfer(TransferRequest) returns (Error);
+  rpc Withdraw(WithdrawRequest) returns(Error);
+  rpc Deposit(DepositRequest) returns(Error);
+  rpc Balance(BalanceRequest) returns(BalanceResponse);
+}
+
+message TransferRequest{
+  string idFrom = 1;
+  string idTo = 2;
+  Money total = 3;
+}
+
+message WithdrawRequest{
+  Money total = 1;
+}
+message DepositRequest{
+  Money total = 1;
+}
+
+message BalanceRequest{
+
+}
+message BalanceResponse{
+  Money total = 1;
+}
+
+message Error{
+  string err = 1;
+}
+
+message Money {
+  string currencyCode = 1;
+  string amount = 2;
+}
