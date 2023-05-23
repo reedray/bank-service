@@ -6,22 +6,19 @@ import (
 	"github.com/reedray/bank-service/internal/converter"
 )
 
-type Server struct {
-	gen_converter.ConvertServiceServer
-	useCase converter.ConvertUseCase
+type ConvertControllerImpl struct {
+	gen_converter.UnsafeConvertServiceServer
+	controller converter.ConvertController
 }
 
-func (g *Server) Convert(ctx context.Context, money *gen_converter.Money) (*gen_converter.Money, error) {
-	rate, err := g.useCase.Convert(ctx, money)
+func (g *ConvertControllerImpl) Convert(ctx context.Context, money *gen_converter.Money) (*gen_converter.Money, error) {
+	rate, err := g.controller.Convert(ctx, money)
 	if err != nil {
 		return nil, err
 	}
 	return rate, nil
 }
 
-func (g *Server) mustEmbedUnimplementedConvertServiceServer() {
-}
-
-func NewServer(c converter.ConvertUseCase) *Server {
-	return &Server{useCase: c}
+func NewConvertController(c converter.ConvertController) *ConvertControllerImpl {
+	return &ConvertControllerImpl{controller: c}
 }

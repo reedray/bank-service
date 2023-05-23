@@ -13,11 +13,11 @@ var hm = map[string]int{"USD": 431, "EUR": 451}
 
 type ConvertUseCaseImpl struct {
 	repo     converter.ConvertRepository
-	webApi   converter.ConvertWebAPI
+	webApi   converter.ConvertUseCase
 	Codes_ID map[string]int
 }
 
-func New(cr converter.ConvertRepository, wa converter.ConvertWebAPI) *ConvertUseCaseImpl {
+func New(cr converter.ConvertRepository, wa converter.ConvertUseCase) *ConvertUseCaseImpl {
 	return &ConvertUseCaseImpl{
 		repo:     cr,
 		webApi:   wa,

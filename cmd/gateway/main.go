@@ -1,24 +1,33 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/reedray/bank-service/api/pb/converter"
-	converter_client "github.com/reedray/bank-service/internal/converter/transport/grpc_transport"
+	"github.com/gorilla/mux"
+	"github.com/reedray/bank-service/config/gateway"
+	"github.com/reedray/bank-service/internal/gateway/server"
+	"log"
+)
+
+var (
+	configPath = "./config/gateway/config.yml"
 )
 
 func main() {
-
-	client := converter_client.NewClient("localhost:8080")
-	req := converter.Money{
-		Amount:       "1",
-		CurrencyCode: "EUR",
-	}
-	converted, err := client.Convert(context.Background(), &req)
+	config, err := gateway.NewConfig(configPath)
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
-	fmt.Println(converted.Amount, converted.CurrencyCode)
-	client.Conn.Close()
+	s := server.New(config)
+	r := mux.NewRouter()
+	r.HandleFunc("/", s.Home)
+	r.HandleFunc("/login", s.Login)
+	r.HandleFunc("/register", s.Register)
+	r.HandleFunc("/deposit", s.Deposit)
+	r.HandleFunc("/withdraw", s.Withdraw)
+	r.HandleFunc("/balance", s.Balance)
+	r.HandleFunc("/transfer", s.Transfer)
+	s.Server.Addr = s.Cfg.Gateway
+	s.Server.Handler = r
+	fmt.Println("server started on", s.Cfg.Gateway)
+	log.Fatal(s.ListenAndServe())
 }

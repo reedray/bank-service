@@ -5,8 +5,8 @@ App:
   version: "1.0.0"
 
 GRPC:
-  Addr: "localhost:8080"
+  Addr: "localhost:8083"
 
 Redis:
-  Addr: "localhost:5432"
+  Addr: "localhost:6543"
   expiresAt: 24h

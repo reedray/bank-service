@@ -1,0 +1,13 @@
+GRPC:
+  Addr: "localhost:8081"
+
+App:
+  Name: "transact"
+  Version: "1.0.0"
+
+DB:
+  ConnectionString: "postgresql://localhost:5432/transact_development?sslmode=disable&user=postgres&password=postgres"
+
+Auth:
+  Secret: "some_secret"
+

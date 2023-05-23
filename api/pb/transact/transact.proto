@@ -10,33 +10,59 @@ service TransferService{
   rpc Withdraw(WithdrawRequest) returns(Error);
   rpc Deposit(DepositRequest) returns(Error);
   rpc Balance(BalanceRequest) returns(BalanceResponse);
+  rpc Login(LoginRequest) returns(LoginResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+}
+
+message LoginRequest{
+  string username = 1;
+  string password = 2;
+}
+message LoginResponse{
+  string token = 1;
+}
+
+message RegisterRequest{
+  string username = 1;
+  string password = 2;
+}
+message RegisterResponse{
+  string token = 1;
 }
 
 message TransferRequest{
-  string idFrom = 1;
-  string idTo = 2;
+  string idTo = 1;
+  string token = 2;
   Money total = 3;
 }
 
 message WithdrawRequest{
-  Money total = 1;
+  string token = 1;
+  Money total = 2;
 }
 message DepositRequest{
-  Money total = 1;
+  string token = 1;
+  Money total = 2;
 }
 
 message BalanceRequest{
-
+  string token = 1;
 }
 message BalanceResponse{
-  Money total = 1;
+  BalanceMoney total = 1;
+  Error errorMsg = 2;
 }
 
 message Error{
   string err = 1;
 }
-
 message Money {
-  string currencyCode = 1;
-  string amount = 2;
+  string amount = 1;
+  string currencyCode = 2;
+}
+
+message BalanceMoney {
+  string byn = 1;
+  string  usd = 2;
+  string  eur = 3;
 }

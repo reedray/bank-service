@@ -1,0 +1,10 @@
+Hosts:
+  Gateway: "localhost:8080"
+  Converter: "loclahost:8083"
+  Transact: "loclahost:8081"
+  Credit: "loclahost:8082"
+
+
+App:
+  Name: "gateway"
+  Version: "1.0.0"

@@ -6,7 +6,7 @@ import (
 	"github.com/reedray/bank-service/internal/converter/entity"
 )
 
-type ConvertUseCase interface {
+type ConvertController interface {
 	Convert(ctx context.Context, data *gen_converter.Money) (*gen_converter.Money, error)
 }
 
@@ -15,6 +15,6 @@ type ConvertRepository interface {
 	SetExchangeRates(context.Context, string, float64) error
 }
 
-type ConvertWebAPI interface {
+type ConvertUseCase interface {
 	Convert(int) (entity.ExchangeRate, error)
 }

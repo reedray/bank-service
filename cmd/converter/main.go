@@ -46,7 +46,7 @@ func main() {
 	convertUseCase := usecase.New(redisRepository, webAPI)
 	log.Info("convert UseCase created")
 
-	handler := grpc_transport.NewServer(convertUseCase)
+	handler := grpc_transport.NewConvertController(convertUseCase)
 
 	listener, err := net.Listen("tcp", cfg.Grpc.Addr)
 	if err != nil {
