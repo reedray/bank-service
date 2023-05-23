@@ -1,8 +1,8 @@
 Hosts:
-  Gateway: "localhost:8080"
-  Converter: "loclahost:8083"
-  Transact: "loclahost:8081"
-  Credit: "loclahost:8082"
+  Gateway: ":8080"
+  Converter: "converter:8083"
+  Transact: "transact:8081"
+  Credit: "credit:8082"
 
 
 App:

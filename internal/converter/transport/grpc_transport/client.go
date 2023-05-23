@@ -2,7 +2,7 @@ package grpc_transport
 
 import (
 	"context"
-	"github.com/reedray/bank-service/api/pb/converter/gen_converter"
+	"github.com/reedray/bank-service/api/pb/converter/gen_convert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -10,7 +10,7 @@ import (
 
 type Client struct {
 	Conn   *grpc.ClientConn
-	Client gen_converter.ConvertServiceClient
+	Client gen_convert.ConvertServiceClient
 }
 
 func NewClient(addr string) *Client {
@@ -20,14 +20,14 @@ func NewClient(addr string) *Client {
 	}
 
 	// Create a client instance
-	client := gen_converter.NewConvertServiceClient(conn)
+	client := gen_convert.NewConvertServiceClient(conn)
 	return &Client{
 		Conn:   conn,
 		Client: client,
 	}
 }
 
-func (c *Client) Convert(ctx context.Context, in *gen_converter.Money, opts ...grpc.CallOption) (*gen_converter.Money, error) {
+func (c *Client) Convert(ctx context.Context, in *gen_convert.Money, opts ...grpc.CallOption) (*gen_convert.Money, error) {
 	converted, err := c.Client.Convert(ctx, in)
 	if err != nil {
 		return nil, err

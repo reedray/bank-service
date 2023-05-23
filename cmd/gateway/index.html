@@ -1,72 +1,405 @@
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--  <title>Login and Registration</title>-->
+<!--  <style>-->
+<!--    .tab {-->
+<!--      display: none;-->
+<!--    }-->
+<!--  </style>-->
+<!--  <script>-->
+<!--    function showTab(tabId) {-->
+<!--      // Hide all tabs-->
+<!--      var tabs = document.getElementsByClassName("tab");-->
+<!--      for (var i = 0; i < tabs.length; i++) {-->
+<!--        tabs[i].style.display = "none";-->
+<!--      }-->
+
+<!--      // Show the selected tab-->
+<!--      var tab = document.getElementById(tabId);-->
+<!--      tab.style.display = "block";-->
+<!--    }-->
+
+<!--    function login() {-->
+<!--      var username = document.getElementById('loginUsername').value;-->
+<!--      var password = document.getElementById('loginPassword').value;-->
+
+<!--      // Make API call to login endpoint-->
+<!--      fetch('/login', {-->
+<!--        method: 'POST',-->
+<!--        headers: {-->
+<!--          'Content-Type': 'application/json'-->
+<!--        },-->
+<!--        body: JSON.stringify({ username: username, password: password })-->
+<!--      })-->
+<!--              .then(response => {-->
+<!--                if (response.ok) {-->
+<!--                  // Redirect to the conversion tab-->
+<!--                  showConversionTab();-->
+<!--                } else {-->
+<!--                  // Handle login error-->
+<!--                  alert('Login failed. Please try again.');-->
+<!--                }-->
+<!--              })-->
+<!--              .catch(error => {-->
+<!--                console.error('Error:', error);-->
+<!--                alert('An error occurred. Please try again later.');-->
+<!--              });-->
+<!--    }-->
+
+<!--    function register() {-->
+<!--      var username = document.getElementById('registerUsername').value;-->
+<!--      var password = document.getElementById('registerPassword').value;-->
+
+<!--      // Make API call to register endpoint-->
+<!--      fetch('/register', {-->
+<!--        method: 'POST',-->
+<!--        headers: {-->
+<!--          'Content-Type': 'application/json'-->
+<!--        },-->
+<!--        body: JSON.stringify({ username: username, password: password })-->
+<!--      })-->
+<!--              .then(response => {-->
+<!--                if (response.ok) {-->
+<!--                  // Redirect to the conversion tab-->
+<!--                  showConversionTab();-->
+<!--                } else {-->
+<!--                  // Handle registration error-->
+<!--                  alert('Registration failed. Please try again.');-->
+<!--                }-->
+<!--              })-->
+<!--              .catch(error => {-->
+<!--                console.error('Error:', error);-->
+<!--                alert('An error occurred. Please try again later.');-->
+<!--              });-->
+<!--    }-->
+
+<!--    function convert() {-->
+<!--      var amount = document.getElementById('conversionAmount').value;-->
+<!--      var currency = document.getElementById('conversionCurrency').value;-->
+
+<!--      // Make API call to convert endpoint-->
+<!--      fetch('/convert', {-->
+<!--        method: 'GET',-->
+<!--        headers: {-->
+<!--          'Content-Type': 'application/json'-->
+<!--        },-->
+<!--        body: JSON.stringify({ amount: amount, currency: currency })-->
+<!--      })-->
+<!--              .then(response => response.json())-->
+<!--              .then(data => {-->
+<!--                // Handle conversion result-->
+<!--                handleConversionResult(data.result);-->
+<!--              })-->
+<!--              .catch(error => {-->
+<!--                console.error('Error:', error);-->
+<!--                alert('An error occurred. Please try again later.');-->
+<!--              });-->
+<!--    }-->
+
+<!--    function showConversionTab() {-->
+<!--      showTab('conversionTab');-->
+<!--    }-->
+
+<!--    function handleConversionResult(result) {-->
+<!--      var conversionResult = document.getElementById('conversionResult');-->
+<!--      conversionResult.textContent = 'Result: ' + result;-->
+<!--    }-->
+<!--  </script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Login and Registration</h1>-->
+
+<!--<button onclick="showTab('loginTab')">Login</button>-->
+<!--<button onclick="showTab('registerTab')">Register</button>-->
+
+<!--&lt;!&ndash; Login Tab &ndash;&gt;-->
+<!--<div id="loginTab" class="tab">-->
+<!--  <h2>Login</h2>-->
+<!--  <input type="text" id="loginUsername" placeholder="Username" required><br>-->
+<!--  <input type="password" id="loginPassword" placeholder="Password" required><br>-->
+<!--  <button onclick="login()">Login</button>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Register Tab &ndash;&gt;-->
+<!--<div id="registerTab" class="tab">-->
+<!--  <h2>Register</h2>-->
+<!--  <input type="text" id="registerUsername" placeholder="Username" required><br>-->
+<!--  <input type="password" id="registerPassword" placeholder="Password" required><br>-->
+<!--  <button onclick="register()">Register</button>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Conversion Tab &ndash;&gt;-->
+<!--<div id="conversionTab" class="tab">-->
+<!--  <h2>Conversion</h2>-->
+<!--  <input type="number" id="conversionAmount" placeholder="Amount" required><br>-->
+<!--  <select id="conversionCurrency">-->
+<!--    <option value="USD">USD</option>-->
+<!--    <option value="EUR">EUR</option>-->
+<!--  </select>-->
+<!--  <button onclick="convert()">Convert</button>-->
+<!--  <div id="conversionResult"></div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--  showTab('loginTab');-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--  <title>Currency Conversion</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Currency Conversion</h1>-->
+
+<!--<form method="POST" action="/convert">-->
+<!--  <input type="text" name="amount" placeholder="Amount" required><br><br>-->
+
+<!--  <label for="usd">USD</label>-->
+<!--  <input type="radio" id="usd" name="currency" value="usd" required>-->
+
+<!--  <label for="eur">EUR</label>-->
+<!--  <input type="radio" id="eur" name="currency" value="eur" required><br><br>-->
+
+<!--  <input type="submit" value="Convert">-->
+<!--</form>-->
+
+<!--<hr>-->
+
+<!--<a href="/login">Login</a> | <a href="/register">Register</a>-->
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login and Registration</title>
-  <style>
-    .tab {
-      display: none;
-    }
-  </style>
-  <script>
-    function showTab(tabId) {
-      // Hide all tabs
-      var tabs = document.getElementsByClassName("tab");
-      for (var i = 0; i < tabs.length; i++) {
-        tabs[i].style.display = "none";
-      }
+    <title>Currency Conversion and Login/Registration</title>
+    <style>
+        .tab {
+            display: none;
+        }
+    </style>
+    <script>
+        function showTab(tabId) {
+            // Hide all tabs
+            var tabs = document.getElementsByClassName("tab");
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = "none";
+            }
 
-      // Show the selected tab
-      var tab = document.getElementById(tabId);
-      tab.style.display = "block";
-    }
-  </script>
+            // Show the selected tab
+            var tab = document.getElementById(tabId);
+            tab.style.display = "block";
+        }
+
+        function login() {
+            var username = document.getElementById('loginUsername').value;
+            var password = document.getElementById('loginPassword').value;
+
+            // Redirect to login endpoint with query parameters
+            window.location.href = "/login?username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);
+        }
+
+        function register() {
+            var username = document.getElementById('registerUsername').value;
+            var password = document.getElementById('registerPassword').value;
+
+            // Redirect to register endpoint with query parameters
+            window.location.href = "/register?username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);
+        }
+
+        function convert() {
+            var amount = document.getElementById('conversionAmount').value;
+            var currencyeur = document.getElementById('eur').value;
+            var out = document.getElementById('output');
+            var currency
+            if (currencyeur.checked) {
+                currency = "EUR"
+            } else {
+                currency = "USD"
+            }
+            console.log(amount, currency)
+            fetch('http://localhost:8080/convert?amount=' + amount + '&currency=' + currency, {})
+                .then(response => {
+                    // handle the response
+                    if (response.ok) {
+                        return response.json()
+                    } else {
+                        throw new Error('Request failed with status ' + response.status);
+                    }
+                })
+                .then(data => {
+                    // handle the data
+                    out.value = data['amount'] + data['currency'];
+                })
+                .catch(error => {
+                    // handle the error
+                    console.error(error);
+                });
+        }
+
+        function showConversionTab() {
+            showTab('conversionTab');
+        }
+    </script>
 </head>
 <body>
-<h1>Login and Registration</h1>
+<h1>OOGA bOOA Conversion, Login, and Registration</h1>
 
+<button onclick="showTab('conversionTab')">Conversion</button>
 <button onclick="showTab('loginTab')">Login</button>
 <button onclick="showTab('registerTab')">Register</button>
 
+<!-- Conversion Tab -->
+<div id="conversionTab" class="tab">
+    <h2>Conversion</h2>
+    <form>
+        <input id="conversionAmount" type="text" name="amount" placeholder="Amount" required> <br><br>
+        <label for="usd">USD</label>
+        <input type="radio" id="usd" name="currency" value="usd" required>
+        <label for="eur">EUR</label>
+        <input type="radio" id="eur" name="currency" value="eur" required><br><br>
+        <button type="button" class="submit" onclick="convert()">Convert</button>
+    </form>
+    <output id="output" type="text">
+
+</div>
+
 <!-- Login Tab -->
 <div id="loginTab" class="tab">
-  <h2>Login</h2>
-  <form action="/login" method="post">
-    <input type="text" name="username" placeholder="Username" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-  </form>
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Username" required><br>
+    <input type="password" id="loginPassword" placeholder="Password" required><br>
+    <button onclick="login()">Login</button>
 </div>
 
 <!-- Register Tab -->
 <div id="registerTab" class="tab">
-  <h2>Register</h2>
-  <form action="/register" method="post">
-    <input type="text" name="username" placeholder="Username" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Register</button>
-  </form>
-</div>
-
-<!-- Conversion Tab -->
-<div id="conversionTab" class="tab">
-  <h2>Conversion</h2>
-  <form action="/convert" method="post">
-    <input type="number" name="usd" placeholder="USD Amount" required><br>
-    <input type="number" name="eur" placeholder="EUR Amount" required><br>
-    <button type="submit">Convert</button>
-  </form>
-  <div id="conversionResult"></div>
+    <h2>Register</h2>
+    <input type="text" id="registerUsername" placeholder="Username" required><br>
+    <input type="password" id="registerPassword" placeholder="Password" required><br>
+    <button onclick="register()">Register</button>
 </div>
 
 <script>
-  function showConversionTab() {
     showTab('conversionTab');
-  }
-
-  function handleConversionResult(result) {
-    var conversionResult = document.getElementById('conversionResult');
-    conversionResult.textContent = 'Result: ' + result;
-  }
 </script>
 </body>
 </html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <title>Currency Conversion and Login/Registration</title>-->
+<!--    <style>-->
+<!--        .tab {-->
+<!--            display: none;-->
+<!--        }-->
+<!--    </style>-->
+<!--    <script>-->
+<!--        function showTab(tabId) {-->
+<!--            // Hide all tabs-->
+<!--            var tabs = document.getElementsByClassName("tab");-->
+<!--            for (var i = 0; i < tabs.length; i++) {-->
+<!--                tabs[i].style.display = "none";-->
+<!--            }-->
+
+<!--            // Show the selected tab-->
+<!--            var tab = document.getElementById(tabId);-->
+<!--            tab.style.display = "block";-->
+<!--        }-->
+
+<!--        function login() {-->
+<!--            var username = document.getElementById('loginUsername').value;-->
+<!--            var password = document.getElementById('loginPassword').value;-->
+
+<!--            // Redirect to login endpoint with query parameters-->
+<!--            window.location.href = "/login?username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);-->
+<!--        }-->
+
+<!--        function register() {-->
+<!--            var username = document.getElementById('registerUsername').value;-->
+<!--            var password = document.getElementById('registerPassword').value;-->
+
+<!--            // Redirect to register endpoint with query parameters-->
+<!--            window.location.href = "/register?username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);-->
+<!--        }-->
+
+<!--        function convert() {-->
+<!--            var amount = document.getElementById().value;-->
+<!--            var currency = "eur"//document.getElementById('conversionCurrency').value;S-->
+<!--            -->
+
+<!--            fetch('http://localhost:8080/convert?', {-->
+<!--                method: 'GET',  // specify the HTTP method-->
+<!--            })-->
+<!--                .then(response => {-->
+<!--                    // handle the response-->
+<!--                    if (response.ok) {-->
+<!--                        console.log(response)-->
+<!--                        return response.json();  // parse response as JSON-->
+<!--                    } else {-->
+<!--                        throw new Error('Request failed with status ' + response.status);-->
+<!--                    }-->
+<!--                })-->
+<!--                .then(data => {-->
+<!--                    // handle the data-->
+<!--                    console.log(data);-->
+<!--                })-->
+<!--                .catch(error => {-->
+<!--                    // handle the error-->
+<!--                    console.error(error);-->
+<!--                });-->
+<!--        }-->
+
+<!--        function showConversionTab() {-->
+<!--            showTab('conversionTab');-->
+<!--        }-->
+<!--    </script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>OOGA bOOA Conversion, Login, and Registration</h1>-->
+
+<!--<button onclick="showTab('conversionTab')">Conversion</button>-->
+<!--<button onclick="showTab('loginTab')">Login</button>-->
+<!--<button onclick="showTab('registerTab')">Register</button>-->
+
+<!--&lt;!&ndash; Conversion Tab &ndash;&gt;-->
+<!--<div id="conversionTab" class="tab">-->
+<!--    <h2>Conversion</h2>-->
+<!--    <form>-->
+<!--        <input type="text" id = "12311" name="amount" placeholder="Amount" required><br><br>-->
+<!--        <label for="usd">USD</label>-->
+<!--        <input type="radio" id="" name="currency" value="usd" required>-->
+<!--        <label for="eur">EUR</label>-->
+<!--        <input type="radio" id="eur" name="currency" value="eur" required><br><br>-->
+<!--        <input type="submit" value="Convert">-->
+<!--    </form>-->
+<!--    <button type="button" class="submit" onclick="convert()">Submit</button>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Login Tab &ndash;&gt;-->
+<!--<div id="loginTab" class="tab">-->
+<!--    <h2>Login</h2>-->
+<!--    <input type="text" id="loginUsername" placeholder="Username" required><br>-->
+<!--    <input type="password" id="loginPassword" placeholder="Password" required><br>-->
+<!--    <button onclick="login()">Login</button>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Register Tab &ndash;&gt;-->
+<!--<div id="registerTab" class="tab">-->
+<!--    <h2>Register</h2>-->
+<!--    <input type="text" id="registerUsername" placeholder="Username" required><br>-->
+<!--    <input type="password" id="registerPassword" placeholder="Password" required><br>-->
+<!--    <button onclick="register()">Register</button>-->
+<!--</div>-->
+<!--<script>-->
+<!--    showTab('conversionTab');-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

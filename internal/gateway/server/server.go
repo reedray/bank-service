@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/reedray/bank-service/api/pb/converter/gen_convert"
 	"github.com/reedray/bank-service/api/pb/transact/gen_transact"
 	"github.com/reedray/bank-service/config/gateway"
 	"google.golang.org/grpc"
@@ -22,6 +24,11 @@ func New(cfg *gateway.Config) *Server {
 	return &Server{Cfg: cfg}
 }
 
+type RegisterRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func (s *Server) Home(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("cmd/gateway/index.html"))
 	err := tmpl.Execute(w, nil)
@@ -29,11 +36,11 @@ func (s *Server) Home(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 }
-
 func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 
-	username := r.FormValue("username")
-	password := r.FormValue("password")
+	username := r.FormValue("loginUsername")
+	password := r.FormValue("loginPassword")
+	fmt.Println(username, password)
 
 	conn, err := grpc.Dial(s.Cfg.Transact, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -64,7 +71,10 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
-
+	fmt.Println(username, password)
+	rq := RegisterRequest{}
+	json.NewDecoder(r.Body).Decode(&rq)
+	fmt.Println(rq)
 	conn, err := grpc.Dial(s.Cfg.Transact, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
@@ -233,6 +243,33 @@ func (s *Server) Transfer(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (s *Server) Credit(w http.ResponseWriter, r *http.Request) {
+func (s *Server) Convert(w http.ResponseWriter, r *http.Request) {
+
+	currency := r.FormValue("currency")
+	amount := r.FormValue("amount")
+	fmt.Println(currency, amount)
+	fmt.Println("HERE")
+
+	conn, err := grpc.Dial(s.Cfg.Converter, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := gen_convert.NewConvertServiceClient(conn)
+	convert, err := client.Convert(context.Background(), &gen_convert.Money{
+		Amount:       amount,
+		CurrencyCode: currency,
+	})
+
+	if err != nil {
+		fmt.Println("HERE 2", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	bytes, _ := json.Marshal(convert)
+	w.Write(bytes)
 
 }

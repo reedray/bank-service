@@ -7,6 +7,8 @@ App:
 GRPC:
   Addr: "localhost:8083"
 
+
+#name of a service in compose
 Redis:
-  Addr: "localhost:6543"
+  Addr: "redis:6379"
   expiresAt: 24h

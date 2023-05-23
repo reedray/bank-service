@@ -96,6 +96,7 @@ func (t *TransferHandlerImpl) Login(ctx context.Context, request *gen_transact.L
 }
 
 func (t *TransferHandlerImpl) Register(ctx context.Context, request *gen_transact.RegisterRequest) *gen_transact.RegisterResponse {
+	fmt.Println("in Handler register")
 	token, err := t.AuthUseCase.Register(ctx, request.Username, request.Password, t.cfg.Secret)
 	if err != nil {
 		fmt.Println(err)

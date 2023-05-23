@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/reedray/bank-service/api/pb/converter/gen_converter"
+	"github.com/reedray/bank-service/api/pb/converter/gen_convert"
 	"github.com/reedray/bank-service/config/converter"
 	"github.com/reedray/bank-service/internal/converter/storage"
 	"github.com/reedray/bank-service/internal/converter/transport/grpc_transport"
@@ -21,13 +21,11 @@ func main() {
 	cfg, err := converter.NewConfig(configPath)
 	if err != nil {
 		fmt.Println(err)
-		//TODO: replace by graceful shutdown
 		return
 	}
 	log, err := logger.NewLogger(cfg.LogLevel)
 	if err != nil {
 		fmt.Println(err)
-		//TODO: replace by graceful shutdown
 		return
 	}
 	log.Info("Logger created")
@@ -35,7 +33,6 @@ func main() {
 	redisRepository, err := storage.NewRedis(cfg)
 	if err != nil {
 		log.Error(err.Error())
-		//TODO: replace by graceful shutdown
 		return
 	}
 	log.Info("redis storage created")
@@ -54,7 +51,7 @@ func main() {
 		return
 	}
 	server := grpc.NewServer()
-	gen_converter.RegisterConvertServiceServer(server, handler)
+	gen_convert.RegisterConvertServiceServer(server, handler)
 	log.Info("starting server")
 	if err = server.Serve(listener); err != nil {
 		log.Fatal(err.Error())

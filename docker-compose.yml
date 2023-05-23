@@ -1,11 +1,22 @@
-version: "3"
+version: "3.9"
 
 services:
+  gateway:
+    build:
+      dockerfile: Dockerfile-gateway
+      target: gateway
+    ports:
+      - "8080:8080"
+  transact:
+    build:
+      dockerfile: Dockerfile-transact
+      target: transact
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: postgres:latest
     restart: always
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -35,5 +46,21 @@ services:
       db:
         condition: service_healthy
     restart: on-failure
+  redis:
+    restart: always
+    image: redis:latest
+    healthcheck:
+      test: [ "CMD","redis-cli","ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  converter:
+    build:
+      dockerfile: Dockerfile-converter
+      target: converter
+    depends_on:
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:

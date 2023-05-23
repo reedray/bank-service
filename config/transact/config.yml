@@ -5,8 +5,9 @@ App:
   Name: "transact"
   Version: "1.0.0"
 
+# db as a name of a service in compose
 DB:
-  ConnectionString: "postgresql://localhost:5432/transact_development?sslmode=disable&user=postgres&password=postgres"
+  ConnectionString: "postgresql://db:5432/transact_development?sslmode=disable&user=postgres&password=postgres"
 
 Auth:
   Secret: "some_secret"

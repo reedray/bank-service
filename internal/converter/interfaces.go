@@ -2,12 +2,12 @@ package converter
 
 import (
 	"context"
-	"github.com/reedray/bank-service/api/pb/converter/gen_converter"
+	"github.com/reedray/bank-service/api/pb/converter/gen_convert"
 	"github.com/reedray/bank-service/internal/converter/entity"
 )
 
 type ConvertController interface {
-	Convert(ctx context.Context, data *gen_converter.Money) (*gen_converter.Money, error)
+	Convert(ctx context.Context, data *gen_convert.Money) (*gen_convert.Money, error)
 }
 
 type ConvertRepository interface {

@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"github.com/reedray/bank-service/api/pb/converter/gen_converter"
+	"github.com/reedray/bank-service/api/pb/converter/gen_convert"
 	"github.com/reedray/bank-service/internal/converter"
 	"strconv"
 )
@@ -25,7 +25,7 @@ func New(cr converter.ConvertRepository, wa converter.ConvertUseCase) *ConvertUs
 	}
 }
 
-func (c *ConvertUseCaseImpl) Convert(ctx context.Context, data *gen_converter.Money) (*gen_converter.Money, error) {
+func (c *ConvertUseCaseImpl) Convert(ctx context.Context, data *gen_convert.Money) (*gen_convert.Money, error) {
 
 	repoRate, err := c.repo.GetExchangeRates(ctx, data.CurrencyCode)
 	if err != nil {
@@ -41,7 +41,7 @@ func (c *ConvertUseCaseImpl) Convert(ctx context.Context, data *gen_converter.Mo
 		repoRate = webApiResponse.Rate
 	}
 	//possibly should be as a method of entity layer
-	m := gen_converter.Money{
+	m := gen_convert.Money{
 		Amount:       "",
 		CurrencyCode: "BYN",
 	}

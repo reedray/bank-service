@@ -26,6 +26,7 @@ func main() {
 	r.HandleFunc("/withdraw", s.Withdraw)
 	r.HandleFunc("/balance", s.Balance)
 	r.HandleFunc("/transfer", s.Transfer)
+	r.HandleFunc("/convert", s.Convert)
 	s.Server.Addr = s.Cfg.Gateway
 	s.Server.Handler = r
 	fmt.Println("server started on", s.Cfg.Gateway)

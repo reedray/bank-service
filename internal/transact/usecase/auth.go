@@ -35,6 +35,7 @@ func (a *AuthUseCaseImpl) Login(ctx context.Context, username, password, secret 
 }
 
 func (a *AuthUseCaseImpl) Register(ctx context.Context, username, password, secret string) (string, error) {
+	fmt.Println("IN use case register")
 	customerByCred, err := a.FindByCredentials(ctx, username, password)
 	if customerByCred != nil && (!customerByCred.CreatedAt.IsZero() || err != nil) {
 		return "", fmt.Errorf("user already exists")
