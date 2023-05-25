@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Banking Operations</title>
+  <style>
+    .tab {
+      display: none;
+    }
+    body {
+      background-color: lightblue;
+    }
+  </style>
+  <script>
+    function openTab(tabName) {
+      const tabs = document.getElementsByClassName('tab');
+      for (let i = 0; i < tabs.length; i++) {
+        tabs[i].style.display = 'none';
+      }
+      document.getElementById(tabName).style.display = 'block';
+    }
+
+    function fetchBalance() {
+      fetch('/balance')
+              .then((response) => {
+                if (response.ok) {
+                  return response.json();
+                } else if (response.status === 401) {
+                  window.location.href = "/"; // Redirect to the login page
+                } else {
+                  throw new Error('Error occurred during the request');
+                }
+              })
+              .then((data) => {
+                const balanceResult = document.getElementById('balanceResult');
+                balanceResult.textContent = `BYN: ${data.BYN}, USD: ${data.USD}, EUR: ${data.EUR}`;
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+    }
+
+    function deposit(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const depositAmount = parseFloat(document.getElementById('depositAmount').value);
+      const currency = document.querySelector('input[name="currency"]:checked').value;
+
+      if (isNaN(depositAmount) || depositAmount <= 0) {
+        const errorField = document.getElementById('depositError');
+        errorField.textContent = 'Invalid deposit amount. Amount must be a positive number.';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('amount', depositAmount);
+      formData.append('currency', currency);
+
+      const resultField = document.getElementById('depositResult');
+      resultField.textContent = ''; // Clear previous result
+      const errorField = document.getElementById('depositError');
+      errorField.textContent = ''; // Clear previous error
+
+      fetch('/deposit', {
+        method: 'POST',
+        body: formData
+      })
+              .then((response) => {
+                if (response.ok) {
+                  resultField.textContent = 'Deposit successful';
+                } else if (response.status === 401) {
+                  console.log('Unauthorized. Redirecting...');
+                  window.location.href = '/'; // Redirect to login page
+                } else {
+                  errorField.textContent = 'Deposit failed';
+                }
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+    }
+
+    function withdraw(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const withdrawAmount = parseFloat(document.getElementById('withdrawAmount').value);
+      const currency = document.querySelector('input[name="currency"]:checked').value;
+
+      if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+        const errorField = document.getElementById('withdrawError');
+        errorField.textContent = 'Invalid withdraw amount. Amount must be a positive number.';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('amount', withdrawAmount);
+      formData.append('currency', currency);
+
+      const resultField = document.getElementById('withdrawResult');
+      resultField.textContent = ''; // Clear previous result
+      const errorField = document.getElementById('withdrawError');
+      errorField.textContent = ''; // Clear previous error
+
+      fetch('/withdraw', {
+        method: 'POST',
+        body: formData
+      })
+              .then((response) => {
+                if (response.ok) {
+                  resultField.textContent = 'Withdraw successful';
+                } else if (response.status === 401) {
+                  console.log('Unauthorized. Redirecting...');
+                  window.location.href = '/'; // Redirect to login page
+                } else if (response.status === 403) {
+                  errorField.textContent = 'Insufficient funds for withdrawal';
+                } else {
+                  errorField.textContent = 'Withdraw failed';
+                }
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+    }
+
+    function transfer(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const recipientId = document.getElementById('idTo').value;
+      const transferAmount = parseFloat(document.getElementById('amount').value);
+      const currency = document.querySelector('input[name="currency"]:checked').value;
+
+      if (isNaN(transferAmount) || transferAmount <= 0) {
+        const errorField = document.getElementById('transferError');
+        errorField.textContent = 'Invalid transfer amount. Amount must be a positive number.';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('recipientId', recipientId);
+      formData.append('amount', transferAmount);
+      formData.append('currency', currency);
+
+      const resultField = document.getElementById('transferResult');
+      resultField.textContent = ''; // Clear previous result
+      const errorField = document.getElementById('transferError');
+      errorField.textContent = ''; // Clear previous error
+
+      fetch('/transfer', {
+        method: 'POST',
+        body: formData
+      })
+              .then((response) => {
+                if (response.ok) {
+                  resultField.textContent = 'Transfer successful';
+                } else if (response.status === 401) {
+                  console.log('Unauthorized. Redirecting...');
+                  window.location.href = '/'; // Redirect to login page
+                } else if (response.status === 403) {
+                  errorField.textContent = 'Insufficient funds for transfer';
+                } else if (response.status === 404) {
+                  errorField.textContent = 'Recipient not found';
+                } else {
+                  errorField.textContent = 'Transfer failed';
+                }
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+    }
+
+    function calculateLoan() {
+      const amountInput = document.getElementById("loanAmount");
+      const yearsInput = document.getElementById("loanYears");
+      const amount = parseFloat(amountInput.value);
+      const years = parseInt(yearsInput.value);
+
+      const data = [];
+
+      for (let i = 0; i <= years; i++) {
+        const remainingAmount = amount * (1 - (i / years) ** 2);
+        data.push(remainingAmount.toFixed(2));
+      }
+
+      displayChart(data);
+    }
+
+    function displayChart(data) {
+      const ctx = document.getElementById("loanChart").getContext("2d");
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: Array.from({ length: data.length }, (_, i) => i),
+          datasets: [
+            {
+              label: "Remaining Amount",
+              data: data,
+              backgroundColor: "rgba(0, 123, 255, 0.5)",
+              borderColor: "rgba(0, 123, 255, 1)",
+              borderWidth: 2,
+              pointRadius: 0,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: {
+              display: true,
+              title: {
+                display: true,
+                text: "Years",
+              },
+              reverse: true,
+            },
+            y: {
+              display: true,
+              title: {
+                display: true,
+                text: "Amount",
+              },
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    }
+
+    document.getElementById('balanceButton').addEventListener('click', function(event) {
+      event.preventDefault(); // Prevent default form submission
+      fetchBalance();
+    });
+  </script>
+</head>
+<body>
+<button onclick="openTab('balanceTab')">Balance</button>
+<button onclick="openTab('depositTab')">Deposit</button>
+<button onclick="openTab('withdrawTab')">Withdraw</button>
+<button onclick="openTab('transferTab')">Transfer</button>
+<button onclick="openTab('loanTab')">Loan</button>
+
+<div id="transferTab" class="tab">
+  <h2>Transfer</h2>
+  <form onsubmit="transfer(event)">
+    <label for="idTo">To:</label>
+    <input type="text" id="idTo" name="idTo" placeholder="Recipient ID" required><br><br>
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" name="amount" placeholder="Amount" required><br><br>
+    <label for="usd">USD</label>
+    <input type="radio" id="usd" name="currency" value="usd" required>
+    <label for="eur">EUR</label>
+    <input type="radio" id="eur" name="currency" value="eur" required>
+    <label for="byn">BYN</label>
+    <input type="radio" id="byn" name="currency" value="byn" required><br><br>
+    <button type="submit">Submit</button>
+  </form>
+  <div>
+    <label for="transferResult">Result:</label>
+    <output id="transferResult"></output>
+  </div>
+  <div id="transferError" style="color: red;"></div>
+</div>
+
+<div id="balanceTab" class="tab">
+  <h2>Balance</h2>
+  <div>
+    <label for="balanceResult">Result:</label>
+    <output id="balanceResult"></output>
+    <button id="balanceButton" onclick="fetchBalance()">Balance</button>
+  </div>
+</div>
+
+<div id="depositTab" class="tab">
+  <h2>Deposit</h2>
+  <form>
+    <label for="depositAmount">Amount:</label>
+    <input type="number" id="depositAmount" name="amount" placeholder="Amount" required><br><br>
+    <label for="usdDeposit">USD</label>
+    <input type="radio" id="usdDeposit" name="currency" value="usd" required>
+    <label for="eurDeposit">EUR</label>
+    <input type="radio" id="eurDeposit" name="currency" value="eur" required>
+    <label for="bynDeposit">BYN</label>
+    <input type="radio" id="bynDeposit" name="currency" value="byn" required><br><br>
+    <button type="button" onclick="deposit(event)">Submit</button>
+  </form>
+  <div>
+    <label for="depositResult">Result:</label>
+    <output id="depositResult"></output>
+  </div>
+  <div id="depositError" style="color: red;"></div>
+</div>
+
+<div id="withdrawTab" class="tab">
+  <h2>Withdraw</h2>
+  <form>
+    <label for="withdrawAmount">Amount:</label>
+    <input type="number" id="withdrawAmount" name="amount" placeholder="Amount" required><br><br>
+    <label for="usdWithdraw">USD</label>
+    <input type="radio" id="usdWithdraw" name="currency" value="usd" required>
+    <label for="eurWithdraw">EUR</label>
+    <input type="radio" id="eurWithdraw" name="currency" value="eur" required>
+    <label for="bynWithdraw">BYN</label>
+    <input type="radio" id="bynWithdraw" name="currency" value="byn" required><br><br>
+    <button type="button" onclick="withdraw(event)">Submit</button>
+  </form>
+  <div>
+    <label for="withdrawResult">Result:</label>
+    <output id="withdrawResult"></output>
+  </div>
+  <div id="withdrawError" style="color: red;"></div>
+</div>
+
+<div id="loanTab" class="tab">
+  <h2>Loan</h2>
+  <div>
+    <form id="loanForm" onsubmit="event.preventDefault(); calculateLoan()">
+      <label for="loanAmount">Loan Amount:</label>
+      <input type="number" id="loanAmount" required>
+
+      <label for="loanYears">Loan Duration (in years):</label>
+      <input type="number" id="loanYears" required>
+
+      <button type="submit">Calculate</button>
+    </form>
+  </div>
+  <div>
+    <canvas id="loanChart"></canvas>
+  </div>
+</div>
+
+<script>
+  openTab('balanceTab'); // Display the balance tab by default
+</script>
+</body>
+</html>

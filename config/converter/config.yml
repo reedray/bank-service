@@ -5,7 +5,7 @@ App:
   version: "1.0.0"
 
 GRPC:
-  Addr: "localhost:8083"
+  Addr: ":8083"
 
 
 #name of a service in compose

@@ -35,9 +35,9 @@ func (d *DepositUseCaseImpl) Execute(ctx context.Context, accountID uuid.UUID, a
 	case "BYN":
 		total.BYN += amount
 	case "USD":
-		total.BYN += amount
+		total.USD += amount
 	case "EUR":
-		total.BYN += amount
+		total.EUR += amount
 	}
 	bytes, err := json.Marshal(total)
 	if err != nil {

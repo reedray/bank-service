@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/reedray/bank-service/internal/transact"
 	"github.com/reedray/bank-service/internal/transact/entity"
+	"log"
 	"time"
 )
 
@@ -15,7 +16,7 @@ type AuthUseCaseImpl struct {
 	transact.CustomerRepository
 }
 
-func NewAuthUseCase(a transact.AuthRepository, c transact.CustomerRepository) *AuthUseCaseImpl {
+func NewAuth(a transact.AuthRepository, c transact.CustomerRepository) *AuthUseCaseImpl {
 	return &AuthUseCaseImpl{
 		AuthRepository:     a,
 		CustomerRepository: c,
@@ -23,6 +24,7 @@ func NewAuthUseCase(a transact.AuthRepository, c transact.CustomerRepository) *A
 }
 
 func (a *AuthUseCaseImpl) Login(ctx context.Context, username, password, secret string) (string, error) {
+	log.Println("finding user by credentials", username, password)
 	customer, err := a.AuthRepository.FindByCredentials(ctx, username, password)
 	if customer.CreatedAt.IsZero() || err != nil {
 		return "", fmt.Errorf("no such user")
@@ -35,7 +37,6 @@ func (a *AuthUseCaseImpl) Login(ctx context.Context, username, password, secret 
 }
 
 func (a *AuthUseCaseImpl) Register(ctx context.Context, username, password, secret string) (string, error) {
-	fmt.Println("IN use case register")
 	customerByCred, err := a.FindByCredentials(ctx, username, password)
 	if customerByCred != nil && (!customerByCred.CreatedAt.IsZero() || err != nil) {
 		return "", fmt.Errorf("user already exists")
@@ -106,6 +107,7 @@ func (a *AuthUseCaseImpl) ValidateToken(tokenString, secret string) (bool, error
 }
 
 func generateToken(customer entity.Customer, secret string) (string, error) {
+	log.Println("Creating token")
 	claims := jwt.MapClaims{
 		"exp":    time.Now().Add(time.Hour).Unix(),
 		"iat":    time.Now(),

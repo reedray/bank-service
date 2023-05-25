@@ -20,6 +20,7 @@ func main() {
 	s := server.New(config)
 	r := mux.NewRouter()
 	r.HandleFunc("/", s.Home)
+	r.HandleFunc("/auth", s.Auth)
 	r.HandleFunc("/login", s.Login)
 	r.HandleFunc("/register", s.Register)
 	r.HandleFunc("/deposit", s.Deposit)

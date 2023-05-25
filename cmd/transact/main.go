@@ -30,11 +30,11 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	ari := storage.NewAuthRepositotyImpl(db)
+	ari := storage.NewAuthRepositoty(db)
 	cri := storage.NewCustomerRepository(db)
 	tri := storage.NewTransacioRepository(db)
 
-	a := usecase.NewAuthUseCase(ari, cri)
+	a := usecase.NewAuth(ari, cri)
 	b := usecase.NewBalance(cri)
 	d := usecase.NewDeposit(cri)
 	tx := usecase.NewTransaction(tri, db)

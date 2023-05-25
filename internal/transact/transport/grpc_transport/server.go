@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/reedray/bank-service/api/pb/transact/gen_transact"
 	"github.com/reedray/bank-service/internal/transact"
+	"log"
 )
 
 type ServerHandler struct {
@@ -19,30 +20,39 @@ func NewServerHandler(h transact.TransferHandler) *ServerHandler {
 }
 
 func (s *ServerHandler) Transfer(ctx context.Context, request *gen_transact.TransferRequest) (*gen_transact.Error, error) {
+	log.Println("Starting transfer operation")
 	resp := s.TransferHandler.Transfer(ctx, request)
 	if resp.Err != "" {
+		log.Println("Failed to finish transfer operation")
 		return resp, fmt.Errorf(resp.Err)
 	}
-	return nil, nil
+	log.Println("Finishing transfer operation")
+	return resp, nil
 }
 
 func (s *ServerHandler) Withdraw(ctx context.Context, request *gen_transact.WithdrawRequest) (*gen_transact.Error, error) {
+	log.Println("Starting withdraw operation")
 	resp := s.TransferHandler.Withdraw(ctx, request)
 	if resp.Err != "" {
 		return resp, fmt.Errorf(resp.Err)
 	}
-	return nil, nil
+	log.Println("Finishing withdraw operation")
+	return resp, nil
 }
 
 func (s *ServerHandler) Deposit(ctx context.Context, request *gen_transact.DepositRequest) (*gen_transact.Error, error) {
+	log.Println("Starting deposit operation")
 	resp := s.TransferHandler.Deposit(ctx, request)
 	if resp.Err != "" {
+		log.Println("Failed to finish deposit operation")
 		return resp, fmt.Errorf(resp.Err)
 	}
-	return nil, nil
+	log.Println("Finishing deposit operation")
+	return resp, nil
 }
 
 func (s *ServerHandler) Balance(ctx context.Context, request *gen_transact.BalanceRequest) (*gen_transact.BalanceResponse, error) {
+	log.Println("Starting balance operation")
 	resp := s.TransferHandler.Balance(ctx, request)
 	if resp.ErrorMsg.Err != "" {
 		return resp, fmt.Errorf(resp.ErrorMsg.Err)

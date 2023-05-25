@@ -62,7 +62,7 @@ message Money {
 }
 
 message BalanceMoney {
-  string byn = 1;
-  string  usd = 2;
-  string  eur = 3;
+  string BYN = 1;
+  string  USD = 2;
+  string  EUR = 3;
 }

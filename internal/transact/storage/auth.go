@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"fmt"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/reedray/bank-service/internal/transact/entity"
@@ -13,12 +12,11 @@ type AuthRepositoryImpl struct {
 	db *pgxpool.Pool
 }
 
-func NewAuthRepositotyImpl(db *pgxpool.Pool) *AuthRepositoryImpl {
+func NewAuthRepositoty(db *pgxpool.Pool) *AuthRepositoryImpl {
 	return &AuthRepositoryImpl{db: db}
 }
 
 func (a *AuthRepositoryImpl) FindByCredentials(ctx context.Context, username, password string) (*entity.Customer, error) {
-	fmt.Println("IN auth repository")
 	format := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	users := format.Select("*").From("Customer").
 		Where(sq.Eq{"username": username}).

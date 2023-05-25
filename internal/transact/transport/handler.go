@@ -10,6 +10,7 @@ import (
 	cfg "github.com/reedray/bank-service/config/transact"
 	"github.com/reedray/bank-service/internal/transact"
 	"github.com/reedray/bank-service/internal/transact/entity"
+	"log"
 	"strconv"
 )
 
@@ -96,7 +97,6 @@ func (t *TransferHandlerImpl) Login(ctx context.Context, request *gen_transact.L
 }
 
 func (t *TransferHandlerImpl) Register(ctx context.Context, request *gen_transact.RegisterRequest) *gen_transact.RegisterResponse {
-	fmt.Println("in Handler register")
 	token, err := t.AuthUseCase.Register(ctx, request.Username, request.Password, t.cfg.Secret)
 	if err != nil {
 		fmt.Println(err)
@@ -108,7 +108,9 @@ func (t *TransferHandlerImpl) Register(ctx context.Context, request *gen_transac
 func (t *TransferHandlerImpl) Deposit(ctx context.Context, request *gen_transact.DepositRequest) *gen_transact.Error {
 	resp := &gen_transact.Error{}
 	valid, err := t.AuthUseCase.ValidateToken(request.Token, t.cfg.Secret)
+	log.Println("Validating token")
 	if err != nil || !valid {
+		log.Println("Failed to validate token or token invalid", err)
 		resp.Err = err.Error()
 		return resp
 	}
@@ -129,18 +131,19 @@ func (t *TransferHandlerImpl) Deposit(ctx context.Context, request *gen_transact
 		resp.Err = err.Error()
 		return resp
 	}
-
 	amount := t.toFloat(request.Total.Amount)
-
+	log.Println("Starting transaction")
 	tx, transaction, err := t.TransactionUseCase.Begin(ctx, toUUID, toUUID, amount, request.Total.CurrencyCode, depositType)
 	if err != nil {
 		resp.Err = err.Error()
 		return resp
 	}
-
+	log.Println("Starting deposit execution")
 	err = t.DepositUseCase.Execute(ctx, toUUID, amount, request.Total.CurrencyCode)
 	if err != nil {
+		log.Println("Failed to execute deposit")
 		err1 := t.TransactionUseCase.Rollback(ctx, tx)
+		log.Println("Failed to Rollback transaction")
 		if err1 != nil {
 			resp.Err = err.Error()
 			return resp
@@ -150,17 +153,19 @@ func (t *TransferHandlerImpl) Deposit(ctx context.Context, request *gen_transact
 	}
 	err = t.TransactionUseCase.Commit(ctx, tx, transaction)
 	if err != nil {
-
+		log.Println("Failed to Commit transaction")
 		resp.Err = err.Error()
 		return resp
 	}
-	return nil
+	return resp
 }
 
 func (t *TransferHandlerImpl) Withdraw(ctx context.Context, request *gen_transact.WithdrawRequest) *gen_transact.Error {
-	resp := &gen_transact.Error{}
+	resp := &gen_transact.Error{Err: ""}
 	valid, err := t.AuthUseCase.ValidateToken(request.Token, t.cfg.Secret)
+	log.Println("Validating token")
 	if err != nil || !valid {
+		log.Println("Failed to validate token or token invalid", err)
 		resp.Err = err.Error()
 		return resp
 	}
@@ -180,19 +185,20 @@ func (t *TransferHandlerImpl) Withdraw(ctx context.Context, request *gen_transac
 		resp.Err = err.Error()
 		return resp
 	}
-
 	amount := t.toFloat(request.Total.Amount)
-
+	log.Println("Starting transaction")
 	tx, transaction, err := t.TransactionUseCase.Begin(ctx, toUUID, toUUID, amount, request.Total.CurrencyCode, withdrawType)
 	if err != nil {
 		resp.Err = err.Error()
 		return resp
 	}
-
+	log.Println("Starting withdraw execution")
 	err = t.WithdrawUseCase.Execute(ctx, toUUID, amount, request.Total.CurrencyCode)
 	if err != nil {
+		log.Println("Failed to execute withdraw execution", err)
 		err1 := t.TransactionUseCase.Rollback(ctx, tx)
 		if err1 != nil {
+			log.Println("Failed to Rollback transaction", err)
 			resp.Err = err1.Error()
 			return resp
 		}
@@ -201,17 +207,19 @@ func (t *TransferHandlerImpl) Withdraw(ctx context.Context, request *gen_transac
 	}
 	err = t.TransactionUseCase.Commit(ctx, tx, transaction)
 	if err != nil {
-
+		log.Println("Failed to commit transaction", err)
 		resp.Err = err.Error()
 		return resp
 	}
-	return nil
+	return resp
 }
 
 func (t *TransferHandlerImpl) Transfer(ctx context.Context, request *gen_transact.TransferRequest) *gen_transact.Error {
-	resp := &gen_transact.Error{}
+	resp := &gen_transact.Error{Err: ""}
+	log.Println("Validating token")
 	valid, err := t.AuthUseCase.ValidateToken(request.Token, t.cfg.Secret)
 	if err != nil || !valid {
+		log.Println("Failed to validate token or token invalid", err)
 		resp.Err = err.Error()
 		return resp
 	}
@@ -239,16 +247,19 @@ func (t *TransferHandlerImpl) Transfer(ctx context.Context, request *gen_transac
 		resp.Err = err.Error()
 		return resp
 	}
+	log.Println("Starting transaction")
 	tx, transaction, err := t.TransactionUseCase.Begin(ctx, id, toID, amount, request.Total.CurrencyCode, transferType)
 	if err != nil {
 		resp.Err = err.Error()
 		return resp
 	}
-
+	log.Println("Starting transfer execution")
 	err = t.TransferUseCase.Execute(ctx, id, toID, amount, request.Total.CurrencyCode)
 	if err != nil {
+		log.Println("Failed to execute transfer execution", err)
 		err1 := t.TransactionUseCase.Rollback(ctx, tx)
 		if err1 != nil {
+			log.Println("Failed to Rollback transaction", err)
 			resp.Err = err.Error()
 			return resp
 		}
@@ -257,66 +268,84 @@ func (t *TransferHandlerImpl) Transfer(ctx context.Context, request *gen_transac
 	}
 	err = t.TransactionUseCase.Commit(ctx, tx, transaction)
 	if err != nil {
+		log.Println("Failed to commit transaction", err)
 		resp.Err = err.Error()
 		return resp
 	}
-	return nil
+	return resp
 }
 
 func (t *TransferHandlerImpl) Balance(ctx context.Context, request *gen_transact.BalanceRequest) *gen_transact.BalanceResponse {
-	resp := &gen_transact.BalanceResponse{}
+	resp := gen_transact.BalanceResponse{
+		Total: &gen_transact.BalanceMoney{
+			BYN: "",
+			USD: "",
+			EUR: "",
+		},
+		ErrorMsg: &gen_transact.Error{},
+	}
+	log.Println("Validating token")
 	valid, err := t.AuthUseCase.ValidateToken(request.Token, t.cfg.Secret)
-	if err != nil || !valid {
+	if !valid || err != nil {
+		log.Println("Failed to validate token or token invalid", err)
 		resp.ErrorMsg.Err = err.Error()
-		return resp
+		return &resp
 	}
 
 	claims, err := t.extractClaims(request.Token)
 	if err != nil {
 		resp.ErrorMsg.Err = err.Error()
-		return resp
+		return &resp
 	}
 	id, err := t.getFromClaims(claims, "id")
 	if err != nil {
 		resp.ErrorMsg.Err = err.Error()
-		return resp
+		return &resp
 	}
 
 	toUUID, err := t.toUUID(id)
 	if err != nil {
 		resp.ErrorMsg.Err = err.Error()
-		return resp
+		return &resp
 	}
 
+	log.Println("Starting transaction")
 	tx, transaction, err := t.TransactionUseCase.Begin(ctx, toUUID, toUUID, 0, "", balanceType)
 	if err != nil {
 		resp.ErrorMsg.Err = err.Error()
-		return resp
+		return &resp
 	}
-
+	log.Println("Starting execution")
 	bytes, err := t.BalanceUseCase.Execute(ctx, toUUID)
 	if err != nil {
+		log.Println("Failed to execute balance operation")
 		err = t.TransactionUseCase.Rollback(ctx, tx)
 		if err != nil {
+			log.Println("Failed to Rollback transaction")
 			resp.ErrorMsg.Err = err.Error()
-			return resp
+			return &resp
 		}
 		resp.ErrorMsg.Err = err.Error()
-		return resp
+		return &resp
 	}
 	err = t.TransactionUseCase.Commit(ctx, tx, transaction)
 	if err != nil {
-
+		log.Println("Failed to commit transaction")
 		resp.ErrorMsg.Err = err.Error()
-		return resp
+		return &resp
 	}
 	var money entity.CurrencyBalance
-	json.Unmarshal(bytes, &money)
+	err = json.Unmarshal(bytes, &money)
+	if err != nil {
+		log.Println(err)
+		resp.ErrorMsg.Err = err.Error()
+		return &resp
+	}
 	byn := strconv.FormatFloat(money.BYN, 'f', -1, 64)
 	usd := strconv.FormatFloat(money.USD, 'f', -1, 64)
 	eur := strconv.FormatFloat(money.EUR, 'f', -1, 64)
-	resp.Total.Byn = byn
-	resp.Total.Usd = usd
-	resp.Total.Eur = eur
-	return resp
+	resp.Total.BYN = byn
+	resp.Total.USD = usd
+	resp.Total.EUR = eur
+	return &resp
 }

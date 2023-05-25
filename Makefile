@@ -14,3 +14,8 @@ migrate-create:
 shell-db:
 	docker compose -f ${DOCKER_COMPOSE_FILE} exec db psql -U postgres -d postgres
 
+up:
+	docker compose  up -d
+
+down:
+	docker compose down
